@@ -37,6 +37,32 @@ const adminController = {
         res.render('admin/restaurant', { restaurant })
       })
       .catch(err => next(err))
+  },
+
+  editRestaurant: (req, res, next) => {
+    Restaurant.findByPk(req.params.id, { raw: true })
+      .then(restaurant => {
+        if (!restaurant) throw new Error('餐廳不存在！')
+        res.render('admin/edit-restaurant', { restaurant })
+      })
+      .catch(err => next(err))
+  },
+
+  putRestaurant: (req, res, next) => {
+    const { name, tel, address, openingHours, description } = req.body
+
+    if (!name) throw new Error('請填入餐廳名稱')
+
+    Restaurant.findByPk(req.params.id)
+      .then(restaurant => {
+        if (!restaurant) throw new Error('餐廳不存在！')
+        return restaurant.update({ name, tel, address, openingHours, description })
+      })
+      .then(() => {
+        req.flash('success_messages', '更新成功！')
+        res.redirect(`/admin/restaurants/${req.params.id}`)
+      })
+      .catch(err => next(err))
   }
 }
 module.exports = adminController
