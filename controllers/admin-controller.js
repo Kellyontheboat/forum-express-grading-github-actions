@@ -1,4 +1,5 @@
 const { Restaurant } = require('../models')
+const { localFileHandler } = require('../helpers/file-helpers')
 const adminController = {
 
   getRestaurants: (req, res, next) => {
@@ -15,14 +16,18 @@ const adminController = {
     const { name, tel, address, openingHours, description } = req.body
 
     if (!name) throw new Error('請填入餐廳名稱')
-
-    Restaurant.create({
-      name,
-      tel,
-      address,
-      openingHours,
-      description
-    })
+    const { file } = req
+    localFileHandler(file)
+      .then(filepath => {
+        return Restaurant.create({
+          name,
+          tel,
+          address,
+          openingHours,
+          description,
+          image: filepath || null
+        })
+      })
       .then(() => {
         req.flash('success_messages', '新增成功！')
         res.redirect('/admin/restaurants')
@@ -50,13 +55,22 @@ const adminController = {
 
   putRestaurant: (req, res, next) => {
     const { name, tel, address, openingHours, description } = req.body
-
-    if (!name) throw new Error('請填入餐廳名稱')
-
-    Restaurant.findByPk(req.params.id)
-      .then(restaurant => {
-        if (!restaurant) throw new Error('餐廳不存在！')
-        return restaurant.update({ name, tel, address, openingHours, description })
+    if (!name) throw new Error('Restaurant name is required!')
+    const { file } = req
+    Promise.all([
+      Restaurant.findByPk(req.params.id),
+      localFileHandler(file) // 把檔案傳到 file-helper 處理(將檔案從temp複製到upload)
+    ])
+      .then(([restaurant, filePath]) => {
+        if (!restaurant) throw new Error("Restaurant didn't exist!")
+        return restaurant.update({
+          name,
+          tel,
+          address,
+          openingHours,
+          description,
+          image: filePath || restaurant.image // (使用者沒有上傳新照片) 就沿用原本資料庫內的值
+        })
       })
       .then(() => {
         req.flash('success_messages', '更新成功！')
@@ -66,7 +80,7 @@ const adminController = {
   },
 
   deleteRestaurant: (req, res, next) => {
-    Restaurant.findByPk(req.params.id) 
+    Restaurant.findByPk(req.params.id)
       .then(restaurant => {
         if (!restaurant) throw new Error('餐廳不存在！')
         return restaurant.destroy()
