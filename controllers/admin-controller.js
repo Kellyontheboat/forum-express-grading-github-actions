@@ -63,6 +63,19 @@ const adminController = {
         res.redirect(`/admin/restaurants/${req.params.id}`)
       })
       .catch(err => next(err))
+  },
+
+  deleteRestaurant: (req, res, next) => {
+    Restaurant.findByPk(req.params.id) 
+      .then(restaurant => {
+        if (!restaurant) throw new Error('餐廳不存在！')
+        return restaurant.destroy()
+      })
+      .then(() => {
+        req.flash('success_messages', '刪除成功！')
+        res.redirect('/admin/restaurants')
+      })
+      .catch(err => next(err))
   }
 }
 module.exports = adminController

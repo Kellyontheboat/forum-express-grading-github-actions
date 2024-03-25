@@ -16,7 +16,7 @@ router.get('/signin', userController.signInPage)
 router.post('/signin', passport.authenticate('local', { failureRedirect: '/signin', failureFlash: true }), userController.signIn)
 router.get('/logout', userController.logout)
 router.get('/restaurants', authenticated, restController.getRestaurants)
-router.use('/', (req, res) => res.redirect('/restaurants')) // *設定 fallback 路由
+router.use('/', (req, res) => res.redirect('/restaurants')) //* 設定 fallback 路由
 router.use('/', generalErrorHandler)
 
 module.exports = router
