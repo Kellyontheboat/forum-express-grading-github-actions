@@ -14,7 +14,7 @@ const userController = {
         return bcrypt.hash(req.body.password, 10)
       })
       .then(hash => {
-        User.create({
+        return User.create({
           name: req.body.name,
           email: req.body.email,
           password: hash
