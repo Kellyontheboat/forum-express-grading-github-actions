@@ -1,0 +1,73 @@
+Example app listening on port 3000!
+
+
+  # R01
+    登入測試: POST /signin
+Executing (default): SELECT `id`, `name`, `email`, `password`, `is_admin` AS `isAdmin`, `created_at` AS `createdAt`, `updated_at` AS `updatedAt` FROM `Users` AS `User` WHERE `User`.`email` = 'root@example.com' LIMIT 1;
+      ✔ #1 密碼錯誤 (96ms)
+Executing (default): SELECT `id`, `name`, `email`, `password`, `is_admin` AS `isAdmin`, `created_at` AS `createdAt`, `updated_at` AS `updatedAt` FROM `Users` AS `User` WHERE `User`.`email` = 'tu' LIMIT 1;
+      ✔ #2 帳號錯誤
+Executing (default): SELECT `id`, `name`, `email`, `password`, `is_admin` AS `isAdmin`, `created_at` AS `createdAt`, `updated_at` AS `updatedAt` FROM `Users` AS `User` WHERE `User`.`email` = 'root@example.com' LIMIT 1;
+      ✔ #3 成功登入 (67ms)
+    # 使用者權限管理
+      # [顯示使用者清單]
+        1)  GET /admin/users 
+      # [修改使用者權限] for root
+        2)  PATCH /admin/users/:id 
+      # [修改使用者權限] for user (user -> admin)
+        3)  PATCH /admin/users/:id 
+      # [修改使用者權限] for user (admin -> user)
+        4)  PATCH /admin/users/:id 
+
+
+  3 passing (177ms)
+  4 failing
+
+  1) # R01
+       # 使用者權限管理
+         # [顯示使用者清單]
+            GET /admin/users :
+     TypeError: Cannot read properties of null (reading 'args')
+      at Context.<anonymous> (tests/R01.test.js:77:30)
+
+  2) # R01
+       # 使用者權限管理
+         # [修改使用者權限] for root
+            PATCH /admin/users/:id :
+
+      AssertionError: expected false to be true
+      + expected - actual
+
+      -false
+      +true
+      
+      at Context.<anonymous> (tests/R01.test.js:110:73)
+
+  3) # R01
+       # 使用者權限管理
+         # [修改使用者權限] for user (user -> admin)
+            PATCH /admin/users/:id :
+
+      AssertionError: expected false to be true
+      + expected - actual
+
+      -false
+      +true
+      
+      at Context.<anonymous> (tests/R01.test.js:145:72)
+
+  4) # R01
+       # 使用者權限管理
+         # [修改使用者權限] for user (admin -> user)
+            PATCH /admin/users/:id :
+
+      AssertionError: expected false to be true
+      + expected - actual
+
+      -false
+      +true
+      
+      at Context.<anonymous> (tests/R01.test.js:184:72)
+
+
+
