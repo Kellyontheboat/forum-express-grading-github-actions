@@ -1,13 +1,6 @@
 <h1>使用者後台</h1>
-<form action="/admin/users" method="GET" style="display: inline;">
-  <button type="submit" class="btn btn-link">使用者後台</button>
-</form>
-<form action="/admin/restaurants" method="GET" style="display: inline;">
-  <button type="submit" class="btn btn-link">餐廳後台</button>
-</form>
-<br />
-
-<br />
+{{> admin-tabs route="users"}}
+</br>
 <table class="table align-middle">
   <thead class="thead-dark">
     <tr>
