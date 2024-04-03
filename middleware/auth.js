@@ -4,15 +4,18 @@ const authenticated = (req, res, next) => {
   if (helpers.ensureAuthenticated(req)) {
     return next()
   }
+  req.flash('error_messages', 'Please sign in.')
   res.redirect('/signin')
 }
 const authenticatedAdmin = (req, res, next) => {
   // if (req.isAuthenticated)
   if (helpers.ensureAuthenticated(req)) {
     if (helpers.getUser(req).isAdmin) return next()
-    res.redirect('/')
+    req.flash('error_messages', 'Permission required.')
+    return res.redirect('/restaurants')
   } else {
-    res.redirect('/signin')
+    req.flash('error_messages', 'Please sign in.')
+    return res.redirect('/signin')
   }
 }
 module.exports = {
