@@ -21,7 +21,6 @@ const categoryController = {
       .then(([categories, category]) => {
         if (!category) {
           req.flash('error_messages', 'Category not found')
-          //return res.redirect('/admin/categories')
         }
         return res.render('admin/categories', { categories, category })
       })
@@ -29,18 +28,18 @@ const categoryController = {
   },
 
   postCategory: (req, res, next) => {
-    const { category } = req.body
-    if (!category) {
+    const { categoryName } = req.body
+    if (!categoryName) {
       req.flash('error_messages', 'please enter a category name')
       return res.redirect('back')
     }
-    return Category.create({ name: category })
+    return Category.create({ name: categoryName })
       .then(() => res.redirect('/admin/categories'))
       .catch(err => next(err))
   },
   putCategory: (req, res, next) => {
-    const { category } = req.body
-    if (!category) {
+    const { categoryName } = req.body
+    if (!categoryName) {
       req.flash('error_messages', 'please enter a category name')
       return res.redirect('back')
     }
@@ -50,12 +49,24 @@ const categoryController = {
           req.flash('error_messages', 'Category not found')
           return res.redirect('/admin/categories')
         }
-        return category.update({ name: req.body.category })
+        return category.update({ name: categoryName })
           .then(() => res.redirect('/admin/categories'))
           .catch(err => next(err))
       })
       .catch(err => next(err))
+  },
+  deleteCategory: (req, res, next) => {
+    return Category.findByPk(req.params.id)
+      .then(category => {
+        if (!category) {
+          req.flash('error_messages', 'Category not found')
+          return res.redirect('/admin/categories')
+        }
+        // await Restaurant.update({ category_id: null }, { where: { category_id: categoryId } })
+        return category.destroy()
+          .then(() => res.redirect('/admin/categories'))
+      })
+      .catch(err => next(err))
   }
 }
-
 module.exports = categoryController
