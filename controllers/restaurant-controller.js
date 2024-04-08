@@ -13,18 +13,32 @@ const restaurantController = {
     })
   },
 
-  getRestaurants: (req, res) => {
-    Restaurant.findAll({
+  getRestaurants: (req, res, next) => {
+    const categoryId = Number(req.query.categoryId) || ''
+    return Promise.all([
+      Restaurant.findAll({
+        include: Category,
+        where: {
+          ...categoryId ? { categoryId } : {} // 檢查 categoryId 是否為空值
+        },
+        raw: true,
+        nest: true
+      }),
+      Category.findAll({ raw: true })
+    ])
+      .then(([restaurants, categories]) => {
+        const data = restaurants.map(r => ({
+          ...r,
+          description: r.description.substring(0, 50)
+        }))
+        return res.render('restaurants', { restaurants: data, categories })
+      })
+      .catch(err => next(err))
+      /*const where = {}
+      if (categoryId) where.categoryId = categoryId
+      return Restaurant.findAll({
       include: Category,
-      raw: true,
-      nest: true
-    }).then(restaurants => {
-      const data = restaurants.map(r => ({
-        ...r,
-        description: r.description.substring(0, 50)
-      }))
-      return res.render('restaurants', { restaurants: data })
-    })
+      where: where, */
   },
 
   getDashboard: (req, res, next) => {
