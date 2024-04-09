@@ -7,10 +7,12 @@ const restaurantController = {
     return Restaurant.findByPk(req.params.id, {
       include: Category,
       // 若沒有加入 nest: true &raw: true，則會回傳 Sequelize 物件,後面需要用restaurant.toJSON()轉換成JSON格式
-      nest: true,
-      raw: true
+      nest: true
     }).then(restaurant => {
-      return res.render('restaurant', { restaurant })
+      if (!restaurant) throw new Error('Restaurant not found!')
+      return restaurant.increment('viewCount')
+    }).then(restaurant => {
+      res.render('restaurant', { restaurant: restaurant.toJSON() })
     })
   },
 
@@ -61,6 +63,7 @@ const restaurantController = {
       nest: true
     })
       .then(restaurant => {
+        console.log(restaurant)
         if (!restaurant) throw new Error("Dashboard didn't exist!")
         res.render('dashboard', { restaurant })
       })
