@@ -21,6 +21,7 @@ router.post('/signin', passport.authenticate('local', {
 router.get('/logout', userController.logout)
 router.get('/restaurants/:id/dashboard', authenticated, restaurantController.getDashboard)
 router.post('/comments', authenticated, commentController.postComment)
+router.delete('/comments/:id', authenticatedAdmin, commentController.deleteComment)
 router.get('/restaurants', authenticated, restaurantController.getRestaurants)
 router.get('/restaurants/:id', restaurantController.getRestaurant)
 router.use('/', (req, res) => res.redirect('/restaurants')) //* 設定 fallback 路由
