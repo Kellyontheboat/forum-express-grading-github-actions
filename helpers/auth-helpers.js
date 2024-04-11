@@ -4,6 +4,7 @@ const getUser = req => {
 
 const ensureAuthenticated = req => {
   return req.isAuthenticated()
+  // passport 提供的函式，會回傳 true 或 false
 }
 
 module.exports = {
